@@ -1,0 +1,19 @@
+[package]
+name = "urlap"
+version = "0.1.0-alpha.1"
+edition = "2024"
+description = "Leptos Form Helpers"
+categories = ["web-programming"]
+homepage = "https://github.com/LeoBorai/urlap"
+repository = "https://github.com/LeoBorai/urlap"
+readme = "README.md"
+keywords = ["leptos", "form"]
+license = "MIT OR Apache-2.0"
+authors = ["Leo Borai <estebanborai@gmail.com>"]
+
+
+[dependencies]
+leptos = "0.7"
+validator = "0.20.0"
+wasm-bindgen = "=0.2.100"
+web-sys = "0.3"
