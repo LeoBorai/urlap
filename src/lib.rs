@@ -3,7 +3,7 @@ use std::fmt::Debug;
 
 use leptos::{
     ev::Event,
-    prelude::{Get, RwSignal, Signal, Update, event_target_value},
+    prelude::{event_target_value, Get, Memo, RwSignal, Set, Signal, Update},
 };
 use validator::Validate;
 use wasm_bindgen::JsCast;
@@ -20,12 +20,6 @@ pub struct Form<T: Clone + Default + FormStruct + Send + Sync + 'static> {
     errors: RwSignal<HashMap<String, Option<String>>>,
 }
 
-impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Default for Form<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
     pub fn new() -> Form<T> {
         let values: RwSignal<T> = RwSignal::new(Default::default());
@@ -34,26 +28,22 @@ impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
         Self { values, errors }
     }
 
-    pub fn values(&self) -> Signal<T> {
-        self.values.into()
-    }
-
-    pub fn errors(&self) -> Signal<HashMap<String, Option<String>>> {
-        self.errors.into()
-    }
-
     pub fn value(&self, field: &str) -> Signal<String> {
-        let values = self.values.get();
-        values.get(field).unwrap_or_default().into()
+        let field = field.to_string();
+        let values = self.values;
+
+        Memo::new(move |_| {
+            values.get().get(&field).unwrap_or_default()
+        }).into()
     }
 
     pub fn error(&self, field: &str) -> Signal<Option<String>> {
-        self.errors
-            .get()
-            .get(field)
-            .cloned()
-            .unwrap_or_default()
-            .into()
+        let field = field.to_string();
+        let errors = self.errors;
+
+        Memo::new(move |_| {
+            errors.get().get(&field).cloned().flatten()
+        }).into()
     }
 
     /// Input Handler for Form Inputs of type [`HtmlInputElement`]
