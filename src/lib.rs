@@ -1,10 +1,9 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-use leptos::{
-    ev::Event,
-    prelude::{event_target_value, Get, Memo, RwSignal, Set, Signal, Update},
-};
+use leptos::ev::Event;
+use leptos::prelude::{event_target_value, Get, Memo, RwSignal, Set, Signal, Update};
+
 use validator::Validate;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlInputElement, SubmitEvent};
@@ -32,18 +31,14 @@ impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
         let field = field.to_string();
         let values = self.values;
 
-        Memo::new(move |_| {
-            values.get().get(&field).unwrap_or_default()
-        }).into()
+        Memo::new(move |_| values.get().get(&field).unwrap_or_default()).into()
     }
 
     pub fn error(&self, field: &str) -> Signal<Option<String>> {
         let field = field.to_string();
         let errors = self.errors;
 
-        Memo::new(move |_| {
-            errors.get().get(&field).cloned().flatten()
-        }).into()
+        Memo::new(move |_| errors.get().get(&field).cloned().flatten()).into()
     }
 
     /// Input Handler for Form Inputs of type [`HtmlInputElement`]
@@ -78,7 +73,15 @@ impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
                     .for_each(|(field, f_errors)| {
                         f_errors.iter().for_each(|err| {
                             errors.update(|e| {
-                                e.insert(field.to_string(), Some(err.to_string()));
+                                e.insert(
+                                    field.to_string(),
+                                    Some(
+                                        err.message
+                                            .clone()
+                                            .map(|m| m.to_string())
+                                            .unwrap_or_default(),
+                                    ),
+                                );
                             });
                         });
                     });
