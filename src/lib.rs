@@ -27,6 +27,13 @@ impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
         Self { values, errors }
     }
 
+    pub fn with_initial_values(values: T) -> Form<T> {
+        let values: RwSignal<T> = RwSignal::new(values);
+        let errors = RwSignal::new(HashMap::new());
+
+        Self { values, errors }
+    }
+
     pub fn value(&self, field: &str) -> Signal<String> {
         let field = field.to_string();
         let values = self.values;
