@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 use leptos::ev::Event;
-use leptos::prelude::{event_target_value, Get, Memo, RwSignal, Set, Signal, Update};
+use leptos::prelude::{event_target_value, Get, Memo, RwSignal, Signal, Update};
 
 use validator::Validate;
 use wasm_bindgen::JsCast;
@@ -39,6 +39,21 @@ impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
         let values = self.values;
 
         Memo::new(move |_| values.get().get(&field).unwrap_or_default()).into()
+    }
+
+    pub fn value_opt(&self, field: &str) -> Signal<Option<String>> {
+        let field = field.to_string();
+        let values = self.values;
+
+        Memo::new(move |_| values.get().get(&field)).into()
+    }
+
+    pub fn set_field_value(&self, field: &str, value: Option<String>) {
+        let values = self.values;
+
+        values.update(|values| {
+            values.set(field, &value.unwrap_or_default());
+        });
     }
 
     pub fn error(&self, field: &str) -> Signal<Option<String>> {
