@@ -48,6 +48,14 @@ impl<T: Clone + Default + FormStruct + Send + Sync + 'static> Form<T> {
         Memo::new(move |_| values.get().get(&field)).into()
     }
 
+    pub fn clear_field_value(&self, field: &str) {
+        let values = self.values;
+
+        values.update(|values| {
+            values.set(field, "");
+        });
+    }
+
     pub fn set_field_value(&self, field: &str, value: Option<String>) {
         let values = self.values;
 
